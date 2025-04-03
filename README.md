@@ -1,53 +1,50 @@
-# BoardgameListingWebApp
+# BoardGame App
 
-## Description
-
-**Board Game Database Full-Stack Web Application.**
-This web application displays lists of board games and their reviews. While anyone can view the board game lists and reviews, they are required to log in to add/ edit the board games and their reviews. The 'users' have the authority to add board games to the list and add reviews, and the 'managers' have the authority to edit/ delete the reviews on top of the authorities of users.  
-
-## Technologies
-
-- Java
-- Spring Boot
-- Amazon Web Services(AWS) EC2
-- Thymeleaf
-- Thymeleaf Fragments
-- HTML5
-- CSS
-- JavaScript
-- Spring MVC
-- JDBC
-- H2 Database Engine (In-memory)
-- JUnit test framework
-- Spring Security
-- Twitter Bootstrap
-- Maven
+## Overview
+BoardGame App is a web-based application that allows users to browse, create, and manage board games. The project is built using Node.js and is designed to be easily deployed and scalable.
 
 ## Features
+- User-friendly interface for managing board games.
+- RESTful API for game data management.
+- Containerized for easy deployment.
+- CI/CD pipeline with Jenkins for automated deployment.
+- Future updates will include Terraform and Ansible for infrastructure automation.
 
-- Full-Stack Application
-- UI components created with Thymeleaf and styled with Twitter Bootstrap
-- Authentication and authorization using Spring Security
-  - Authentication by allowing the users to authenticate with a username and password
-  - Authorization by granting different permissions based on the roles (non-members, users, and managers)
-- Different roles (non-members, users, and managers) with varying levels of permissions
-  - Non-members only can see the boardgame lists and reviews
-  - Users can add board games and write reviews
-  - Managers can edit and delete the reviews
-- Deployed the application on AWS EC2
-- JUnit test framework for unit testing
-- Spring MVC best practices to segregate views, controllers, and database packages
-- JDBC for database connectivity and interaction
-- CRUD (Create, Read, Update, Delete) operations for managing data in the database
-- Schema.sql file to customize the schema and input initial data
-- Thymeleaf Fragments to reduce redundancy of repeating HTML elements (head, footer, navigation)
+## Technologies Used
+- Node.js (Backend)
+- Docker (Containerization)
+- Jenkins (CI/CD Automation)
+- GitHub (Version Control)
+- Terraform & Ansible (Planned for future updates)
 
-## How to Run
+## Installation & Running the Project
+You can run the project locally using Docker without Docker Compose.
 
-1. Clone the repository
-2. Open the project in your IDE of choice
-3. Run the application
-4. To use initial user data, use the following credentials.
-  - username: bugs    |     password: bunny (user role)
-  - username: daffy   |     password: duck  (manager role)
-5. You can also sign-up as a new user and customize your role to play with the application! 😊
+### Steps:
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/EslamMOsman/boardgame-app.git
+   cd boardgame-app
+   ```
+
+2. Build the Docker image:
+   ```bash
+   docker build -t eslammagdy/boardgame-app:v1 .
+   ```
+
+3. Run the container:
+   ```bash
+   docker run -d -p 4040:4040 eslammagdy/boardgame-app:v1
+   ```
+
+4. The app will be available at `http://localhost:4040`.
+
+## Running the Project with Jenkins
+The project can also be deployed using Jenkins by configuring a pipeline with a `Jenkinsfile`. Jenkins will automate the build and deployment process.
+
+## Future Enhancements
+- **Terraform & Ansible:** Infrastructure as Code (IaC) tools will be integrated to manage cloud resources and automate deployment.
+- **Additional Features:** More functionalities will be added to enhance the user experience.
+
+Stay tuned for more updates! 🚀
+
