@@ -11,7 +11,7 @@ pipeline {
         TF_DIR = '../terraform'
         ANSIBLE_DIR = '../ansible'
         K8S_DIR = '../k8s'
-        APP_DIR = '../app'  // غيّر ده لو اسم مجلد المشروع مختلف
+        APP_DIR = '../app'
     }
 
     stages {
