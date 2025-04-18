@@ -1,37 +1,47 @@
 pipeline {
     agent any
+
     tools {
         maven 'maven'
         jdk 'jdk17'
     }
+
     environment {
-        ROOT_DIR = '..'             // نرجع خطوة علشان نوصل لباقي الفولدرات
+        ROOT_DIR = '..'
         TF_DIR = '../terraform'
         ANSIBLE_DIR = '../ansible'
         K8S_DIR = '../k8s'
+        APP_DIR = '../app'  // غيّر ده لو اسم مجلد المشروع مختلف
     }
+
     stages {
         stage('Compile') {
             steps {
-                sh "echo 'start compile'"
-                sh "mvn compile"
-                sh "echo 'end compile'"
+                dir("${APP_DIR}") {
+                    sh "echo 'start compile'"
+                    sh "mvn compile"
+                    sh "echo 'end compile'"
+                }
             }
         }
 
         stage('Test') {
             steps {
-                sh "echo 'start test'"
-                sh "mvn test"
-                sh "echo 'end test'"
+                dir("${APP_DIR}") {
+                    sh "echo 'start test'"
+                    sh "mvn test"
+                    sh "echo 'end test'"
+                }
             }
         }
 
         stage('Build') {
             steps {
-                sh "echo 'start build'"
-                sh "mvn package"
-                sh "echo 'end build'"
+                dir("${APP_DIR}") {
+                    sh "echo 'start build'"
+                    sh "mvn package"
+                    sh "echo 'end build'"
+                }
             }
         }
 
