@@ -1,0 +1,72 @@
+pipeline {
+    agent any
+    tools {
+        maven 'maven'
+        jdk 'jdk17'
+    }
+    environment {
+        ROOT_DIR = '..'             // نرجع خطوة علشان نوصل لباقي الفولدرات
+        TF_DIR = '../terraform'
+        ANSIBLE_DIR = '../ansible'
+        K8S_DIR = '../k8s'
+    }
+    stages {
+        stage('Compile') {
+            steps {
+                sh "echo 'start compile'"
+                sh "mvn compile"
+                sh "echo 'end compile'"
+            }
+        }
+
+        stage('Test') {
+            steps {
+                sh "echo 'start test'"
+                sh "mvn test"
+                sh "echo 'end test'"
+            }
+        }
+
+        stage('Build') {
+            steps {
+                sh "echo 'start build'"
+                sh "mvn package"
+                sh "echo 'end build'"
+            }
+        }
+
+        stage('Terraform Deploy') {
+            steps {
+                dir("${TF_DIR}") {
+                    sh 'terraform init'
+                    sh 'terraform apply -auto-approve'
+                }
+            }
+        }
+
+        stage('Generate Inventory') {
+            steps {
+                dir("${TF_DIR}") {
+                    sh 'python3 terraform_inventory.py'
+                }
+            }
+        }
+
+        stage('Run Ansible Playbook') {
+            steps {
+                dir("${ANSIBLE_DIR}") {
+                    sh 'ansible-playbook -i ../terraform/inventory.ini deploy_k8s.yaml'
+                }
+            }
+        }
+
+        stage('Apply Kubernetes YAMLs') {
+            steps {
+                dir("${K8S_DIR}") {
+                    sh 'kubectl apply -f deployment.yaml'
+                    sh 'kubectl apply -f service.yaml'
+                }
+            }
+        }
+    }
+}

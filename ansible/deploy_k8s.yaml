@@ -1,0 +1,39 @@
+---
+- name: Deploy Kubernetes app from k8s folder
+  hosts: eks
+  become: yes
+  tasks:
+
+    - name: Install kubectl
+      shell: |
+        curl -LO "https://dl.k8s.io/release/$(curl -sL https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+        install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+      args:
+        chdir: /tmp
+
+    - name: Create remote directory for K8s files
+      file:
+        path: /home/ubuntu/k8s
+        state: directory
+        owner: ubuntu
+        group: ubuntu
+        mode: '0755'
+
+    - name: Copy deployment.yaml to remote server
+      copy:
+          src: ../k8s/deployment.yaml
+          dest: /home/ubuntu/k8s/deployment.yaml
+
+    - name: Copy service.yaml to remote server
+      copy:
+        src: ../k8s/service.yaml
+        dest: /home/ubuntu/k8s/service.yaml
+
+    
+    - name: Apply Kubernetes deployment
+      become: false
+      shell: kubectl apply -f /home/ubuntu/k8s/deployment.yaml
+
+    - name: Apply Kubernetes service
+      become: false
+      shell: kubectl apply -f /home/ubuntu/k8s/service.yaml
