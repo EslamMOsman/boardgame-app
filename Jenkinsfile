@@ -3,7 +3,7 @@ pipeline{
     stages{
         stage("Sonar-scanner"){
             steps{
-                withSonarQubeEnv('sonarqube') {
+                withSonarQubeEnv('sonarqube-scanner') {
                    sh """
                     #!/bin/bash
                     set -e
