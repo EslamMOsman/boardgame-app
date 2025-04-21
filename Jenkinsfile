@@ -1,37 +1,61 @@
-pipeline {
+pipeline{
     agent any
-    tools {
-        maven 'maven'
-        jdk 'jdk17'
-    }
-    stages {
-        stage('compile') {
-            steps {
-                sh "echo 'start compile'"
-                sh "mvn compile"
-                sh "echo 'end compile'"
+    stages{
+        stage("Sonar-scanner"){
+            steps{
+                withSonarQubeEnv('sonarqube') {
+                   sh """
+                    #!/bin/bash
+                    set -e
+                    set -x
+                    sonar-scanner \
+                        -Dsonar.projectKey=your_project_key \
+                        -Dsonar.sources=. \
+                        -Dsonar.host.url=http://your-sonarqube-server:9000 \
+                        -Dsonar.login=$SONAR_AUTH_TOKEN
+                        """
+                }
             }
         }
-        stage('Test') {
-            steps {
-                sh "echo 'start test'"
-                sh "mvn test"
-                sh "echo 'end test'"
+
+        stage("Sonar-quality-gate"){
+            steps{
+                script {
+                    timeout(time: 10, unit: 'MINUTES') {
+                        waitForQualityGate abortPipeline: true
+                    }
+                }
             }
         }
-        stage('build') {
-            steps {
-                sh "echo 'start build'"
-                sh "mvn package"
-                sh "echo 'end build'"
+        stage("Install npm"){
+            steps{
+                sh "npm install"
             }
         }
-        stage('Docker Build') {
+        stage("Dependabcy-check"){
+            steps{
+                dependencyCheck additionalArguments: '--scan . --nodeAuditSkipDevDependencies', odcInstallation: 'OWASP-Dependency-Check'
+        dependencyCheckPublisher pattern: 'dependency-check-report.xml'
+            }
+        }
+        stage ("Trivy File Scan") {
             steps {
-                sh "echo 'start Docker build'"
-                sh "docker build -t eslammagdy/boardgame-app:v1 ."
-                sh "docker run -d -p 4040:4040 eslammagdy/boardgame-app:v1"
-                sh "echo 'end Docker build'"
+                sh "trivy fs . > trivy.txt"
+            }
+        }
+        stage("Docker image build"){
+            steps{
+                sh "docker build -t boardgame-app ."
+            }
+        }
+        stage("Docker image scan"){
+            steps{
+                sh "trivy image --severity HIGH,CRITICAL --exit-code 1 --no-progress boardgame-app"
+            }
+        }
+        stage("Deploy Docker Container"){
+            steps{
+                sh "docker run -d -p 4040:4040 boardgame-app"
             }
         }
     }
