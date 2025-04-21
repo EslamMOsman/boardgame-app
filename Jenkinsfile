@@ -12,7 +12,7 @@ pipeline {
                         -Dsonar.projectKey=boardgame-app \
                         -Dsonar.sources=. \
                         -Dsonar.host.url=http://your-sonarqube-server:9000 \
-                        -Dsonar.login=${SONAR_AUTH_TOKEN}
+                        -Dsonar.login=${jenkins-sonar-token}
                     '''
                 }
             }
