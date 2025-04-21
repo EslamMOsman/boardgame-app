@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        SONAR_AUTH_TOKEN = credentials('sonar-token-id') // لو بتحب تستخدمها كـ Credentials
+        jenkins-sonar-token = credentials('sonar-token-id') // لو بتحب تستخدمها كـ Credentials
     }
     stages {
         stage("Sonar-scanner") {
